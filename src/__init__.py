@@ -9,14 +9,18 @@
 # blueprints are meant to group related functionality together
 
 
-from flask import Flask
 import os
+
+from flask import Flask
+
 from src.auth import auth
 from src.bookmark import bookmark
+from src.database import db
 
 
-# ky factory function do krijoje aplikacionin dhe do percaktoje disa konfigurime
+# ky factory function do krijoje aplikacionin dhe do percaktoje disa konfigurime si dhe do migroje tabelat ne database
 def create_app(test_config=None):
+
     # ky parameter i thote Flask-ut se kemi disa konfigurime
     app = Flask(__name__, instance_relative_config=True)
 
@@ -24,7 +28,10 @@ def create_app(test_config=None):
     if test_config is None:
 
         # update-ojme konfigurimet me kete funksion
-        app.config.from_mapping(SECRET_KEY=os.environ.get('SECRET_KEY'))
+        app.config.from_mapping(SECRET_KEY=os.getenv('SECRET_KEY'),
+                                SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI'),
+                                SQLALCHEMY_TRACK_MODIFICATIONS=os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS'),
+                                FLASK_APP=os.environ.get('FLASK_APP'))
 
     else:
         # nqs i ka konfigurimet atehere merri nga parametri test_config
@@ -33,6 +40,10 @@ def create_app(test_config=None):
     # pasi krijuam blueprints i rregjistrojme
     app.register_blueprint(auth)
     app.register_blueprint(bookmark)
+
+    # do rregjistrojme db
+    db.app = app
+    db.init_app(app)
 
     # qe te funksionojne "gjerat" i percaktojme keto funksione create_app() dhe e bejme folderin src entry point
     @app.route('/index')
@@ -44,11 +55,13 @@ def create_app(test_config=None):
     def say_hello():
         return {'hello': 'world'}
 
-    return app.run()
+    db.create_all()
+
+    return app
+
 
 if __name__ == "__main__":
     create_app()
-
 
 # Hapat
 # 1. Project introduction and demo
@@ -56,4 +69,4 @@ if __name__ == "__main__":
 # 3. Flask API folder structure
 # 4. Flask API Blueprints
 # 5. Database and Models setup
-# 6.
+# 6. HTTPS Status Codes
