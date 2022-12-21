@@ -70,3 +70,4 @@ if __name__ == "__main__":
 # 4. Flask API Blueprints
 # 5. Database and Models setup
 # 6. HTTPS Status Codes
+# 7. User Registration
