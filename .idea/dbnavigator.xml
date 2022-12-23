@@ -32,11 +32,12 @@
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="545dfa12-0280-4535-9704-eb389bbf5f14" object-ref="consoles/bookmark-api" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="545dfa12-0280-4535-9704-eb389bbf5f14" />
-    <connection id="dfb36ab1-b5a0-4f29-8580-216439e3410d" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -73,7 +74,7 @@
           <description value="bookmark" />
           <database-type value="POSTGRES" />
           <config-type value="BASIC" />
-          <database-version value="14.5" />
+          <database-version value="12.12" />
           <driver-source value="BUILTIN" />
           <driver-library value="" />
           <driver value="" />
@@ -121,7 +122,7 @@
           <alternative-statement-delimiter value="" />
         </details>
         <object-filters hide-empty-schemas="false" hide-pseudo-columns="false">
-          <object-type-filter>
+          <object-type-filter use-master-settings="true">
             <object-type name="SCHEMA" enabled="true" />
             <object-type name="USER" enabled="true" />
             <object-type name="ROLE" enabled="true" />
@@ -192,7 +193,6 @@
         <object-type name="FUNCTION" sorting-type="NAME" />
         <object-type name="PROCEDURE" sorting-type="NAME" />
         <object-type name="ARGUMENT" sorting-type="POSITION" />
-        <object-type name="TYPE ATTRIBUTE" sorting-type="POSITION" />
       </sorting>
       <default-editors>
         <object-type name="VIEW" editor-type="SELECTION" />
@@ -239,11 +239,11 @@
         <nulls-first value="true" />
         <max-sorting-columns value="4" />
       </sorting>
-      <audit-columns>
-        <column-names value="" />
+      <tracking-columns>
+        <columnNames value="" />
         <visible value="true" />
         <editable value="false" />
-      </audit-columns>
+      </tracking-columns>
     </dataset-grid-settings>
     <dataset-editor-settings>
       <text-editor-popup>

@@ -16,6 +16,7 @@ from flask import Flask
 from src.auth import auth
 from src.bookmark import bookmark
 from src.database import db
+from flask_jwt_extended import JWTManager
 
 
 # ky factory function do krijoje aplikacionin dhe do percaktoje disa konfigurime si dhe do migroje tabelat ne database
@@ -31,7 +32,8 @@ def create_app(test_config=None):
         app.config.from_mapping(SECRET_KEY=os.getenv('SECRET_KEY'),
                                 SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI'),
                                 SQLALCHEMY_TRACK_MODIFICATIONS=os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS'),
-                                FLASK_APP=os.environ.get('FLASK_APP'))
+                                FLASK_APP=os.environ.get('FLASK_APP'),
+                                JWT_SECRET_KEY=os.getenv('JWT_SECRET_KEY'))
 
     else:
         # nqs i ka konfigurimet atehere merri nga parametri test_config
@@ -40,6 +42,9 @@ def create_app(test_config=None):
     # pasi krijuam blueprints i rregjistrojme
     app.register_blueprint(auth)
     app.register_blueprint(bookmark)
+
+    # Kur te kthejme app-in do kemi jwt manager te konfiguaruar
+    JWTManager(app)   # encrypt and decrypt Tokens
 
     # do rregjistrojme db
     db.app = app

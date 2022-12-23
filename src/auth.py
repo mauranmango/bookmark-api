@@ -1,8 +1,10 @@
 # dhe blueprint per users
-from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED
-from flask import Blueprint, request, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
 import validators
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import create_refresh_token
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED
 from src.database import User, db
 
 # duhet ti themi programit se nga duhet te ekzekutohet prandaj kalojme parametrin __name__
@@ -52,6 +54,20 @@ def register():
                         'email': email}}), HTTP_201_CREATED
 
     # Nqs do tentojme te krijojme te njejtin user do na shfaqi error {"error": "email is taken"}
+
+
+@auth.route('/login', methods=['POST'])
+def login():
+    email = request.json.get('email', ' ')
+    password = request.json.get('password', ' ')
+
+    # do shohim nqs email ekziston dhe password eshte i sakte
+
+    user = User.query.filter_by(email=email).first()
+
+    # nqs useri ekziston dhe passwordi eshte i njejte do krijojme token
+    if user and check_password_hash(user.password, password):
+        refresh = create_refresh_token(user.id)
 
 
 # nje funksion qe kthen userin e loguar
