@@ -1,10 +1,11 @@
 # dhe blueprint per users
 import validators
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_refresh_token
+from flask_jwt_extended import create_refresh_token, create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED
+from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED,\
+    HTTP_401_UNAUTHORIZED, HTTP_200_OK
 from src.database import User, db
 
 # duhet ti themi programit se nga duhet te ekzekutohet prandaj kalojme parametrin __name__
@@ -58,6 +59,7 @@ def register():
 
 @auth.route('/login', methods=['POST'])
 def login():
+    # email eshte key keshtu qe nqs nuk kthen gje atehere merr default hapesire
     email = request.json.get('email', ' ')
     password = request.json.get('password', ' ')
 
@@ -67,7 +69,20 @@ def login():
 
     # nqs useri ekziston dhe passwordi eshte i njejte do krijojme token
     if user and check_password_hash(user.password, password):
-        refresh = create_refresh_token(user.id)
+        refresh = create_refresh_token(identity=user.id)
+        access = create_access_token(identity=user.id)
+
+        return jsonify({
+            "user": {
+                "refresh": refresh,
+                "access": access,
+                "username": user.username,
+                "email": user.email
+            }
+        }), HTTP_200_OK
+
+    # nqs username apo password nuk eshte i sakte atehere do ktheje json me error
+    return jsonify({"error": "wrong credentials"}), HTTP_401_UNAUTHORIZED
 
 
 # nje funksion qe kthen userin e loguar
