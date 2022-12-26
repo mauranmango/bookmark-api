@@ -1,7 +1,7 @@
 # dhe blueprint per users
 import validators
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_refresh_token, create_access_token
+from flask_jwt_extended import create_refresh_token, create_access_token, current_user, jwt_required, get_jwt_identity  # decorator per te bere protect routes
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED,\
@@ -85,7 +85,17 @@ def login():
     return jsonify({"error": "wrong credentials"}), HTTP_401_UNAUTHORIZED
 
 
-# nje funksion qe kthen userin e loguar
+# nje funksion qe kthen te dhenat e userit te loguar por eshte e domosdoshme json web token
+# Per ta aksesuar logohemi qe te gjenerojme web token dhe token e kalojme si argument te auth-bearer token
 @auth.route('/me', methods=['GET'])
+@jwt_required()
 def me():
-    return {'user': 'me'}
+    # import pdb        # python debugger: pause a program the we expect some variables
+    user_id = get_jwt_identity()   # do na japi user_id
+    user = User.query.filter_by(id=user_id).first()   # gjejme ate user nga tabela e userave duke filtruar me id
+    return jsonify({
+        'user': {
+            "username": user.username,
+            "email": user.email
+        }
+    }), HTTP_200_OK

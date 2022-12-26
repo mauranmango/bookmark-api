@@ -69,12 +69,13 @@ if __name__ == "__main__":
     create_app()
 
 # Hapat
-# 1. Project introduction and demo
-# 2. Project setup
-# 3. Flask API folder structure
-# 4. Flask API Blueprints
-# 5. Database and Models setup
-# 6. HTTPS Status Codes
-# 7. User Registration
-# 8. User Login
-# 9. Route Protection
+#  1. Project introduction and demo
+#  2. Project setup
+#  3. Flask API folder structure
+#  4. Flask API Blueprints
+#  5. Database and Models setup
+#  6. HTTPS Status Codes
+#  7. User Registration
+#  8. User Login
+#  9. Route Protection
+# 10. Refresh Token
