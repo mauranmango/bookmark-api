@@ -48,13 +48,20 @@ def bookmarks():
                 }
         }), HTTP_201_CREATED
 
-    else:          # nqs nuk rregjistrohet do na ktheje te gjithe bookmarks qe kemi
+    # nqs nuk rregjistrohet do na ktheje te gjithe bookmarks qe kemi
+    else:
+        # per te aplikuar paginate na duhen dy gjera: 1. Faqja nga do marrim te dhenat, 2. per page count
+        # page do ta kalojme si argument ne url psh: http://127.0.0.1:5000/api/v1/bookmarks/?page=2
+        page = request.args.get("page", 1, type=int)
+        per_page = request.args.get("per_page", 1, type=int)
+
 
         # marrim te gjithe bookmarket e userit te loguar
-        bookmarks = Bookmark.query.filter_by(user_id=current_user)
+        bookmarks = Bookmark.query.filter_by(user_id=current_user).paginate(page=page, per_page=per_page)
+
         data = []
 
-        for bookmark in bookmarks:
+        for bookmark in bookmarks.items:    #  pagination  object is not iterable that's why bookmarks.items
             data.append({
                 "id": bookmark.id,
                 "url": bookmark.url,
@@ -65,5 +72,15 @@ def bookmarks():
                 "updated_at": bookmark.update_at
             })
 
-        return jsonify({"data": data}), HTTP_200_OK
+            meta = {
+                "page": bookmarks.page,
+                "pages": bookmarks.pages,
+                "total_count": bookmarks.total,
+                "prev_page": bookmarks.prev_num,
+                "next_page:": bookmarks.next_num,
+                "has_next": bookmarks.has_next,
+                "has_prev": bookmarks.has_prev
+            }
+
+        return jsonify({"data": data, "meta": meta}), HTTP_200_OK
 
