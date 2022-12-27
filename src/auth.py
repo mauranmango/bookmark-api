@@ -99,3 +99,14 @@ def me():
             "email": user.email
         }
     }), HTTP_200_OK
+
+
+@auth.route('/token/refresh', methods=['GET'])
+@jwt_required(refresh=True)
+def refresh_users_token():
+    identity = get_jwt_identity()
+    access = create_refresh_token(identity=identity)     # duhet refresh token per te krijuar token tjeter
+
+    return jsonify({
+        "access": access
+    }), HTTP_200_OK
