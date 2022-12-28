@@ -28,11 +28,13 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="545dfa12-0280-4535-9704-eb389bbf5f14">
-      <console name="bookmark-api" type="STANDARD" schema="information_schema" session="Main"><![CDATA[select * from "public"."user"]]></console>
+      <console name="bookmark-api" type="STANDARD" schema="information_schema" session="Main"><![CDATA[select * from "public"."bookmark"]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="545dfa12-0280-4535-9704-eb389bbf5f14" object-ref="consoles/bookmark-api" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="545dfa12-0280-4535-9704-eb389bbf5f14" />
