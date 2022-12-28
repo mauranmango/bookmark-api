@@ -1,11 +1,12 @@
 # do percaktojme blueprint per bookmarks
+import validators
 from flask import Blueprint, request
 from flask.json import jsonify
-import validators
-from flask_jwt_extended import current_user, get_jwt_identity, jwt_required
-from src.database import Bookmark, db
-from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED, HTTP_200_OK
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
+from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED, HTTP_200_OK, \
+    HTTP_404_NOT_FOUND, HTTP_302_FOUND
+from src.database import Bookmark, db
 
 bookmark = Blueprint('bookmark', __name__, url_prefix='/api/v1/bookmarks')
 
@@ -14,7 +15,7 @@ bookmark = Blueprint('bookmark', __name__, url_prefix='/api/v1/bookmarks')
 @bookmark.route('/', methods=['POST', 'GET'])
 @jwt_required()
 def bookmarks():
-    current_user = get_jwt_identity()      # na jep id e userit te loguar
+    current_user = get_jwt_identity()  # na jep id e userit te loguar
 
     if request.method == 'POST':
         body = request.get_json().get('body', "")
@@ -55,13 +56,12 @@ def bookmarks():
         page = request.args.get("page", 1, type=int)
         per_page = request.args.get("per_page", 1, type=int)
 
-
         # marrim te gjithe bookmarket e userit te loguar
         bookmarks = Bookmark.query.filter_by(user_id=current_user).paginate(page=page, per_page=per_page)
 
         data = []
 
-        for bookmark in bookmarks.items:    #  pagination  object is not iterable that's why bookmarks.items
+        for bookmark in bookmarks.items:  # pagination  object is not iterable that's why bookmarks.items
             data.append({
                 "id": bookmark.id,
                 "url": bookmark.url,
@@ -84,3 +84,28 @@ def bookmarks():
 
         return jsonify({"data": data, "meta": meta}), HTTP_200_OK
 
+
+@bookmark.route("/<int:id>", methods=['GET'])
+@jwt_required()
+def retrieve_one(id):
+    current_user = get_jwt_identity()
+
+    # bookmark = Bookmark.query.filter_by(user_id=current_user, id=id).first()
+
+    # funksionon edhe keshtu
+    bookmark = Bookmark.query.filter_by(id=id).first()
+
+    if not bookmark:
+        return jsonify({
+            "message": "Item not found"
+        }), HTTP_404_NOT_FOUND
+
+    return jsonify({
+        "id": bookmark.id,
+        "url": bookmark.url,
+        "short_url": bookmark.short_url,
+        "visits": bookmark.visits,
+        "body": bookmark.body,
+        "created_at": bookmark.created_at,
+        "updated_at": bookmark.update_at
+    }), HTTP_302_FOUND
