@@ -11,11 +11,11 @@
 
 import os
 
-from flask import Flask
+from flask import Flask, redirect
 
 from src.auth import auth
 from src.bookmark import bookmark
-from src.database import db
+from src.database import db, Bookmark
 from flask_jwt_extended import JWTManager
 
 
@@ -60,6 +60,18 @@ def create_app(test_config=None):
     def say_hello():
         return {'hello': 'world'}
 
+    # krijojme kete view function qe do numeroje vizitat te short url dhe do na ridrejtoje te url
+    @app.route('/<short_url>', methods=['GET'])
+    def redirect_to_url(short_url):
+        bookmark = Bookmark.query.filter_by(short_url=short_url).first_or_404()
+
+        if bookmark:
+            bookmark.visits += 1
+            db.session.commit()
+
+            return redirect(bookmark.url)
+
+
     db.create_all()
 
     return app
@@ -84,3 +96,4 @@ if __name__ == "__main__":
 # 13. Retrieve One
 # 14. Editing Items  ( U )
 # 15. Deleting Items ( D )
+# 16. User Link Click Tracking
