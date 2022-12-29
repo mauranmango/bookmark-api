@@ -5,7 +5,7 @@ from flask.json import jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED, HTTP_200_OK, \
-    HTTP_404_NOT_FOUND, HTTP_302_FOUND
+    HTTP_404_NOT_FOUND, HTTP_302_FOUND, HTTP_204_NO_CONTENT
 from src.database import Bookmark, db
 
 bookmark = Blueprint('bookmark', __name__, url_prefix='/api/v1/bookmarks')
@@ -14,7 +14,7 @@ bookmark = Blueprint('bookmark', __name__, url_prefix='/api/v1/bookmarks')
 # view function qe shton dhe kthen listen e bookmark-eve (CREATE READ)
 @bookmark.route('/', methods=['POST', 'GET'])
 @jwt_required()
-def bookmarks():
+def create_and_show_all_bookmarks():
     current_user = get_jwt_identity()  # na jep id e userit te loguar
 
     if request.method == 'POST':
@@ -87,7 +87,7 @@ def bookmarks():
 
 @bookmark.route("/<int:id>", methods=['GET'])
 @jwt_required()
-def retrieve_one(id):
+def get_bookmark(id):
     current_user = get_jwt_identity()
 
     # bookmark = Bookmark.query.filter_by(user_id=current_user, id=id).first()
@@ -142,3 +142,33 @@ def edit_bookmark(id):
         "created_at": bookmark.created_at,
         "updated_at": bookmark.update_at
     }), HTTP_200_OK
+
+
+@bookmark.route('/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_bookmark(id):
+
+    bookmark = Bookmark.query.filter_by(id=id).first()
+
+    if not bookmark:
+        return jsonify({
+            "message": "Item not found"
+        }), HTTP_404_NOT_FOUND
+
+    db.session.delete(bookmark)
+    db.session.commit()
+
+    # ose do kthejme objektin e fshire ose do kthejme no content
+    # return jsonify({
+    #     "deleted item": {
+    #         "id": bookmark.id,
+    #         "url": bookmark.url,
+    #         "short_url": bookmark.short_url,
+    #         "visits": bookmark.visits,
+    #         "body": bookmark.body,
+    #         "created_at": bookmark.created_at,
+    #         "updated_at": bookmark.update_at
+    #     }
+    # })
+
+    return jsonify({}), HTTP_204_NO_CONTENT
