@@ -172,3 +172,4 @@ def delete_bookmark(id):
     # })
 
     return jsonify({}), HTTP_204_NO_CONTENT
+

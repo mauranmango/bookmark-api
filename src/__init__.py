@@ -12,11 +12,12 @@
 import os
 
 from flask import Flask, redirect
-
+from flask.json import jsonify
 from src.auth import auth
 from src.bookmark import bookmark
 from src.database import db, Bookmark
 from flask_jwt_extended import JWTManager
+from src.constants.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 
 
 # ky factory function do krijoje aplikacionin dhe do percaktoje disa konfigurime si dhe do migroje tabelat ne database
@@ -70,6 +71,19 @@ def create_app(test_config=None):
             db.session.commit()
 
             return redirect(bookmark.url)
+
+    @app.errorhandler(HTTP_404_NOT_FOUND)
+    def handle_404(e):   # sa here krijojme nje error handler duhet te kalojme si argument nje exception
+        return jsonify({
+            "Message": "Error 404! Page not found!"
+        }), HTTP_404_NOT_FOUND
+
+
+    @app.errorhandler(HTTP_500_INTERNAL_SERVER_ERROR)
+    def handle_500(e):
+        return jsonify({
+            "Message": "Internal Server Error! We are working on it!"
+        }), HTTP_500_INTERNAL_SERVER_ERROR
 
 
     db.create_all()
