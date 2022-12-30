@@ -94,7 +94,7 @@ def create_app(test_config=None):
 if __name__ == "__main__":
     create_app()
 
-# Hapat
+# Hapat (https://www.youtube.com/watch?v=WFzRy8KVcrM)
 #  1. Project introduction and demo
 #  2. Project setup
 #  3. Flask API folder structure
@@ -111,3 +111,5 @@ if __name__ == "__main__":
 # 14. Editing Items  ( U )
 # 15. Deleting Items ( D )
 # 16. User Link Click Tracking
+# 17. Error Handling
+# 18. Get Link Stats
