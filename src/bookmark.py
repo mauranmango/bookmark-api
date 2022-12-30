@@ -7,6 +7,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED, HTTP_200_OK, \
     HTTP_404_NOT_FOUND, HTTP_302_FOUND, HTTP_204_NO_CONTENT
 from src.database import Bookmark, db
+from flasgger import swag_from
 
 bookmark = Blueprint('bookmark', __name__, url_prefix='/api/v1/bookmarks')
 
@@ -177,6 +178,7 @@ def delete_bookmark(id):
 # Do merrim url dhe numrin e hereve qe eshte vizituar
 @bookmark.route('/stats', methods=['GET'])
 @jwt_required()
+@swag_from("./docs/bookmark/stats.yaml")
 def get_stats():
     current_user = get_jwt_identity()
     data = []

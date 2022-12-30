@@ -208,9 +208,5 @@ fabric.properties
 .idea/sonarlint/issuestore/b/
 .idea/sonarlint/issuestore/d/
 .idea/sonarlint/issuestore/e/
-src/config/
-src/services/
-src/static/
-src/templates/
 src/tests/
 .idea/sonarlint/issuestore/a/

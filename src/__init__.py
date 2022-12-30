@@ -18,6 +18,8 @@ from src.bookmark import bookmark
 from src.database import db, Bookmark
 from flask_jwt_extended import JWTManager
 from src.constants.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
+from flasgger import Swagger, swag_from  # swag_from create a yaml file
+from src.config.swagger import template, swagger_config
 
 
 # ky factory function do krijoje aplikacionin dhe do percaktoje disa konfigurime si dhe do migroje tabelat ne database
@@ -34,7 +36,11 @@ def create_app(test_config=None):
                                 SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI'),
                                 SQLALCHEMY_TRACK_MODIFICATIONS=os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS'),
                                 FLASK_APP=os.environ.get('FLASK_APP'),
-                                JWT_SECRET_KEY=os.getenv('JWT_SECRET_KEY'))
+                                JWT_SECRET_KEY=os.getenv('JWT_SECRET_KEY'),
+                                SWAGGER={
+                                    "title": "Bookmark",
+                                    "uiversion":3
+                                })
 
     else:
         # nqs i ka konfigurimet atehere merri nga parametri test_config
@@ -46,6 +52,8 @@ def create_app(test_config=None):
 
     # Kur te kthejme app-in do kemi jwt manager te konfiguaruar
     JWTManager(app)   # encrypt and decrypt Tokens
+
+    Swagger(app, config=swagger_config, template=template)
 
     # do rregjistrojme db
     db.app = app
@@ -63,6 +71,7 @@ def create_app(test_config=None):
 
     # krijojme kete view function qe do numeroje vizitat te short url dhe do na ridrejtoje te url
     @app.route('/<short_url>', methods=['GET'])
+    @swag_from("./docs/bookmark/short_url.yaml")
     def redirect_to_url(short_url):
         bookmark = Bookmark.query.filter_by(short_url=short_url).first_or_404()
 
@@ -113,3 +122,9 @@ if __name__ == "__main__":
 # 16. User Link Click Tracking
 # 17. Error Handling
 # 18. Get Link Stats
+# 19. Swagger Documentation (How api is structured and how is should be accessed - Flasgger(automatic tool to document))
+      # -> pip install flasgger
+      # -> config -> swagger.py
+      # -> create yaml files and decorate view functions with swag_from decorator
+      # -> /apispec.json   ---> ben te mundur exportimin e ketij dokumentimi. PSH ne Postman -> File -> Import
+# 20. Heroku Deployment

@@ -1,0 +1,15 @@
+Get Stats about bookmarks
+---
+tags:
+  - Bookmarks     # i grupon nqs do e bejme bookmark do e grupoje bashke me short_url
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+
+responses:
+  200:
+    description: Bookmark stats
+
+  401:
+    description: Fails to get items due to authentication error

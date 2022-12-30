@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from src.constants.http_status_codes import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, HTTP_201_CREATED,\
     HTTP_401_UNAUTHORIZED, HTTP_200_OK
 from src.database import User, db
+from flasgger import swag_from
 
 # duhet ti themi programit se nga duhet te ekzekutohet prandaj kalojme parametrin __name__
 # gjithashtu mund te percaktojme prefiks per url
@@ -14,6 +15,7 @@ auth = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
 
 @auth.route('/register', methods=['POST'])
+@swag_from('./docs/auth/register.yaml')
 def register():
     # web applications frequently require processing incoming request data from users
     # na lejon aksesin e drejtperdrejte te atributeve merr vlerat qe i percaktojme te body
@@ -58,6 +60,7 @@ def register():
 
 
 @auth.route('/login', methods=['POST'])
+@swag_from('./docs/auth/login.yaml')
 def login():
     # email eshte key keshtu qe nqs nuk kthen gje atehere merr default hapesire
     email = request.json.get('email', ' ')

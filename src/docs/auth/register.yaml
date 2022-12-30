@@ -1,0 +1,34 @@
+User Registration
+---
+tags:
+  - Authentication      # i grupon nqs do e bejme bookmark do e grupoje bashke me short_url
+parameters:
+  - name: body
+    description: The body should contain the user registration data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "email"
+        - "password"
+        - "username"
+      properties:
+        email:
+          type: "email"
+          example: "use_registerr@gmail.com"
+        username:
+          type: "username"
+          example: "username"
+        password:
+          type: "string"
+          format: password
+          example: "*****"
+
+
+responses:
+  201:
+    description: When a user successfully logs in
+
+  400:
+    description: Fails to register due to bad request data
