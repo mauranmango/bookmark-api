@@ -11,7 +11,7 @@ from src.database import Bookmark, db
 bookmark = Blueprint('bookmark', __name__, url_prefix='/api/v1/bookmarks')
 
 
-# view function qe shton dhe kthen listen e bookmark-eve (CREATE READ)
+# view function qe shton dhe kthen listen e bookmark-eve (CREATE READ) (C)
 @bookmark.route('/', methods=['POST', 'GET'])
 @jwt_required()
 def create_and_show_all_bookmarks():
@@ -85,6 +85,7 @@ def create_and_show_all_bookmarks():
         return jsonify({"data": data, "meta": meta}), HTTP_200_OK
 
 
+# Si te therrasim nje bookmark te caktuar duke u nisur nga id (R)
 @bookmark.route("/<int:id>", methods=['GET'])
 @jwt_required()
 def get_bookmark(id):
@@ -110,10 +111,10 @@ def get_bookmark(id):
     }), HTTP_302_FOUND
 
 
+# Si te rifreskojme nje bookmark (U)
 @bookmark.route('/<int:id>', methods=['PUT'])
 @jwt_required()
 def edit_bookmark(id):
-
     bookmark = Bookmark.query.filter_by(id=id).first()
 
     if not bookmark:
@@ -144,10 +145,10 @@ def edit_bookmark(id):
     }), HTTP_200_OK
 
 
+# Si te fshijme nje bookmark (D)
 @bookmark.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_bookmark(id):
-
     bookmark = Bookmark.query.filter_by(id=id).first()
 
     if not bookmark:
@@ -170,5 +171,27 @@ def delete_bookmark(id):
     #         "updated_at": bookmark.update_at
     #     }
     # })
-
     return jsonify({}), HTTP_204_NO_CONTENT
+
+
+# Do merrim url dhe numrin e hereve qe eshte vizituar
+@bookmark.route('/stats', methods=['GET'])
+@jwt_required()
+def get_stats():
+    current_user = get_jwt_identity()
+    data = []
+
+    items = Bookmark.query.filter_by(user_id=current_user).all()
+
+    for item in items:
+        new_link = {
+            "url": item.url,
+            "visits": item.visits,
+            "short_url": item.short_url,
+            "id": item.id
+        }
+        data.append(new_link)
+
+    return jsonify({
+        "data": data
+    }), HTTP_200_OK
